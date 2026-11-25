@@ -8,22 +8,39 @@
     <add key="D365:ClientSecret" value="your-client-secret-here" />
     <add key="D365:Resource" value="https://your-environment.operations.dynamics.com" />
     <add key="D365:BaseUrl" value="https://your-environment.operations.dynamics.com" />
-    
+
     <!-- Claude API Configuration -->
-    <!-- Get your API key from: https://console.anthropic.com/ -->
-    <add key="Claude:ApiKey" value="sk-ant-api03-your-key-here" />
-    
-    <!-- Model Options:
-         - claude-sonnet-4-20250514 (Best quality, recommended)
-         - claude-haiku-4-20250514 (Faster, cost-effective)
-    -->
-    <add key="Claude:Model" value="claude-sonnet-4-20250514" />
-    
-    <!-- Max tokens for Claude response (1024-4096 recommended) -->
-    <add key="Claude:MaxTokens" value="4096" />
-    
-    <add key="Claude:ApiUrl" value="https://api.anthropic.com/v1/messages" />
-    
+    <!-- Recommended: leave Claude:ApiKey as-is and set the ANTHROPIC_API_KEY environment variable instead.
+         The Anthropic SDK picks it up automatically, so the key never lives in a config file.
+         Get a key from https://platform.claude.com/ -->
+    <add key="Claude:ApiKey" value="sk-ant-api-key" />
+
+    <!-- Model: claude-opus-5-5 (no date suffix). Alternatives: claude-sonnet-5-5, claude-haiku-5-5 -->
+    <add key="Claude:Model" value="claude-opus-5-5" />
+
+    <!-- Effort controls how deeply Claude thinks: low | medium | high | xhigh | max (API default: medium).
+         Higher effort = better analysis, more output tokens. For xhigh/max, raise MaxTokens to 64000+. -->
+    <add key="Claude:Effort" value="medium" />
+
+    <!-- Max output tokens per request: covers thinking + code execution + final answer -->
+    <add key="Claude:MaxTokens" value="32000" />
+
+    <!-- summarized = stream Claude's reasoning to the console (great for live demos); omitted = hide it -->
+    <add key="Claude:ThinkingDisplay" value="summarized" />
+
+    <!-- The uploaded D365 export auto-expires on Anthropic's side after this many hours (1-2160) -->
+    <add key="Claude:FileExpirationHours" value="24" />
+
+    <!-- Delete the uploaded export and generated files from the Files API after the run (true/false) -->
+    <add key="Claude:DeleteFilesAfterRun" value="true" />
+
+    <!-- How many times to resume a long code-execution turn the API paused (stop_reason "pause_turn") -->
+    <add key="Claude:MaxContinuations" value="5" />
+
+    <!-- USD per million tokens, for the cost estimate only (Opus 5.5 list price: $4 in / $20 out) -->
+    <add key="Claude:InputPricePerMTok" value="4" />
+    <add key="Claude:OutputPricePerMTok" value="20" />
+
     <!-- Output Configuration -->
     <add key="Output:ExcelFileName" value="D365_Data_Export.xlsx" />
     <add key="Output:Directory" value="./output" />

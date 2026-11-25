@@ -2,6 +2,39 @@
 
 A .NET console application that extracts data from Microsoft Dynamics 365 Finance & Supply Chain (D365FSC) via OData and leverages Claude AI for intelligent data analysis.
 
+
+## What's new (November 2026 update)
+
+The Claude integration was rebuilt on the **official Anthropic C# SDK** (`Anthropic` on NuGet, v13+) and **Claude Opus 5.5**.
+
+| Before (January 2026) | Now |
+|---|---|
+| Hand-rolled `HttpClient` + Newtonsoft JSON payloads | `AnthropicClient` with typed requests and responses, plus built-in retries and timeouts |
+| `anthropic-version: 2023-06-01` + `files-api` / `code-execution` beta headers | API version `2026-10-21` (set by the SDK). Files API and code execution are GA, so no beta headers |
+| `claude-sonnet-4-20250514`, `max_tokens` 4096 | `claude-opus-5-5`, adaptive thinking, `effort` dial, `max_tokens` 32000 |
+| `code_execution_20250825` | `code_execution_20260521` |
+| One blocking request, answer printed at the end | Streaming: Claude's thinking summaries and sandbox steps appear live in the console |
+| Generated workbooks only visible in the Claude Console | Files Claude saves to `$OUTPUT_DIR` are downloaded to `output/Claude_<timestamp>/` |
+| Uploaded export left in the Files API | Upload auto-expires (24h default) and is deleted after the run |
+| Long runs could stop part-way | `pause_turn` continuations are handled automatically |
+| API key in App.config | `ANTHROPIC_API_KEY` environment variable (App.config still works as a fallback) |
+
+### Quick setup changes
+
+```powershell
+# .NET 10 SDK required (net8.0 -> net10.0)
+setx ANTHROPIC_API_KEY "sk-ant-..."      # then open a new terminal
+dotnet restore
+dotnet run
+```
+
+New App.config keys (see `App.config.template`): `Claude:Effort`, `Claude:ThinkingDisplay`,
+`Claude:FileExpirationHours`, `Claude:DeleteFilesAfterRun`, `Claude:MaxContinuations`,
+`Claude:InputPricePerMTok`, `Claude:OutputPricePerMTok`. `Claude:ApiUrl` is gone; set `ANTHROPIC_BASE_URL` if you need a proxy.
+
+> **Opus 5.5 gotchas:** thinking can't be turned off (control it with `effort`), and `temperature`/`top_p`/`top_k`
+> and forced `tool_choice` are rejected. Responses can start with `thinking` blocks, so always read content blocks by type.
+
 ## 🎯 What This Does
 
 Think of this as your D365 data's new best friend who happens to be really good at math (and doesn't require coffee breaks). This tool:
